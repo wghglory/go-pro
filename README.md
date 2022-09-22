@@ -5,3 +5,4 @@
 - Chapter04: Basic Types, `Pointers`
 - Chapter05: Operations and Conversions
 - Chapter06: Flow Control
+- Chapter07: Array, Slice, Map
