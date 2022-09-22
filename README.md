@@ -6,3 +6,4 @@
 - Chapter05: Operations and Conversions
 - Chapter06: Flow Control
 - Chapter07: Array, Slice, Map
+- Chapter08: Function
