@@ -7,3 +7,4 @@
 - Chapter06: Flow Control
 - Chapter07: Array, Slice, Map
 - Chapter08: Function
+- Chapter09: Function Types
