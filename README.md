@@ -9,3 +9,4 @@
 - Chapter08: Function
 - Chapter09: Function Types
 - Chapter10: Structs
+- Chapter11: Methods and Interfaces
