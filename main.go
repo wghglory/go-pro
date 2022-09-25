@@ -11,6 +11,16 @@ type Supplier struct {
 	name, city string
 }
 
+type ProductList []Product
+
+func (products *ProductList) calcCategoryTotals() map[string]float64 {
+	totals := make(map[string]float64)
+	for _, p := range *products {
+		totals[p.category] = totals[p.category] + p.price
+	}
+	return totals
+}
+
 //	func printDetails(product *Product) {
 //		fmt.Println("name", product.name, "category", product.category, "price", product.price)
 //	}
@@ -25,18 +35,27 @@ func (product *Product) calcTax(rate, threshold float64) float64 {
 	return product.price
 }
 
+func getProducts() []Product {
+	return []Product{{"Kayak", "Watersports", 275}, {"Lifejacket", "Watersports", 48.95}, {"Soccer Ball", "Soccer", 19.50}}
+}
+
 func (supplier *Supplier) printDetails() {
 	fmt.Println("Supplier:", supplier.name, "City:", supplier.city)
 }
 
 func main() {
-	products := []*Product{
-		{"Kayak", "Watersports", 275},
-		{"Lifejacket", "Watersports", 48.95},
-		{"Soccer Ball", "Soccer", 19.5},
-	}
+	// products := []*Product{
+	// products := ProductList{
+	// 	{"Kayak", "Watersports", 275},
+	// 	{"Lifejacket", "Watersports", 48.95},
+	// 	{"Soccer Ball", "Soccer", 19.5},
+	// }
+	products := ProductList(getProducts())
 	for _, p := range products {
 		p.printDetails()
+	}
+	for category, total := range products.calcCategoryTotals() {
+		fmt.Println("Category: ", category, "Total:", total)
 	}
 
 	suppliers := []*Supplier{{"Acme Co", "New York City"}, {"BoatCo", "Chicago"}}
