@@ -1,13 +1,15 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	currencyFmt "packages/fmt"
 
 	// . "packages/fmt"
 	_ "packages/data"
 	"packages/store"
 	"packages/store/cart"
+
+	"github.com/fatih/color"
 )
 
 func main() {
@@ -23,9 +25,9 @@ func main() {
 		Products:     []store.Product{*product},
 	}
 
-	fmt.Println("Customer Name:", cart.CustomerName)
-	fmt.Println("Product Name:", product.Name)
-	fmt.Println("Category:", product.Category)
-	fmt.Println("Price:", currencyFmt.ToCurrency(product.Price()))
+	color.Green("Customer Name: " + cart.CustomerName)
+	color.Cyan("Product Name: " + product.Name)
+	color.Cyan("Category: " + product.Category)
+	color.Cyan("Price: " + currencyFmt.ToCurrency(product.Price()))
 	// fmt.Println("Price:", ToCurrency(product.Price()))
 }
