@@ -5,6 +5,7 @@ import (
 	currencyFmt "packages/fmt"
 
 	// . "packages/fmt"
+	_ "packages/data"
 	"packages/store"
 	"packages/store/cart"
 )
