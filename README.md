@@ -10,3 +10,4 @@
 - Chapter09: Function Types
 - Chapter10: Structs
 - Chapter12: Packages
+- Chapter13: Types and Interface Composition
