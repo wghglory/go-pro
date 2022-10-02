@@ -2,6 +2,8 @@
 // commonly required for online sales
 package store
 
+var standardTax = newTaxRate(0.25, 20)
+
 // Product describes a product for sale
 type Product struct {
 	Name, Category string
@@ -13,7 +15,7 @@ func NewProduct(name, category string, price float64) *Product {
 }
 
 func (p *Product) Price() float64 {
-	return p.price
+	return standardTax.calcTax(p)
 }
 
 func (p *Product) SetPrice(price float64) {
