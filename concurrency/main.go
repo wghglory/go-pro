@@ -28,4 +28,15 @@ func main() {
 	result := <-resultChannel
 	fmt.Println("Result:", result)
 
+	// receive unknown number of channel messages, need check channel open/close
+	dispatchChannel := make(chan DispatchNotification, 100)
+	go DispatchOrders(dispatchChannel)
+	for {
+		if details, open := <-dispatchChannel; open {
+			fmt.Println("Dispatch to", details.Customer, ":", details.Quantity, "x", details.Product.Name)
+		} else {
+			fmt.Println("Channel has been closed")
+			break
+		}
+	}
 }
