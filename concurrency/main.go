@@ -5,6 +5,14 @@ import (
 	// "time"
 )
 
+// The for loop will continue to receive values until the channel is closed. (You can use a for...range loop on a channel that isn’t closed, in which case the loop will never exit.)
+func receiveDispatches(channel <-chan DispatchNotification) {
+	for details := range channel {
+		fmt.Println("Dispatch to", details.Customer, ":", details.Quantity, "x", details.Product.Name)
+	}
+	fmt.Println("Channel has been closed")
+}
+
 func main() {
 	fmt.Println("main function started")
 	CalcStoreTotal(Products)
@@ -30,7 +38,9 @@ func main() {
 
 	// receive unknown number of channel messages, need check channel open/close
 	dispatchChannel := make(chan DispatchNotification, 100)
-	go DispatchOrders(dispatchChannel)
+	var sendOnlyChannel chan<- DispatchNotification = dispatchChannel
+	var receiveOnlyChannel <-chan DispatchNotification = dispatchChannel
+	go DispatchOrders(sendOnlyChannel) // explicit conversion: go DispatchOrders(chan<- DispatchNotification(dispatchChannel))
 	// for {
 	// 	if details, open := <-dispatchChannel; open {
 	// 		fmt.Println("Dispatch to", details.Customer, ":", details.Quantity, "x", details.Product.Name)
@@ -39,9 +49,5 @@ func main() {
 	// 		break
 	// 	}
 	// }
-	// The for loop will continue to receive values until the channel is closed. (You can use a for...range loop on a channel that isn’t closed, in which case the loop will never exit.)
-	for details := range dispatchChannel {
-		fmt.Println("Dispatch to", details.Customer, ":", details.Quantity, "x", details.Product.Name)
-	}
-	fmt.Println("Channel has been closed")
+	receiveDispatches(receiveOnlyChannel) // explicit conversion: receiveDispatches((<-chan DispatchNotification)(dispatchChannel))
 }

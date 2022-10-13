@@ -14,7 +14,9 @@ type DispatchNotification struct {
 
 var Customers = []string{"Alice", "Bob", "Charlie", "Dora"}
 
-func DispatchOrders(channel chan DispatchNotification) {
+// chan<- means channel can be used only to send.
+// <-chan means to receive only
+func DispatchOrders(channel chan<- DispatchNotification) {
 	rand.Seed(time.Now().UTC().UnixNano())
 	orderCount := rand.Intn(3) + 2
 	fmt.Println("Order count:", orderCount)
