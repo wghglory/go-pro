@@ -31,12 +31,17 @@ func main() {
 	// receive unknown number of channel messages, need check channel open/close
 	dispatchChannel := make(chan DispatchNotification, 100)
 	go DispatchOrders(dispatchChannel)
-	for {
-		if details, open := <-dispatchChannel; open {
-			fmt.Println("Dispatch to", details.Customer, ":", details.Quantity, "x", details.Product.Name)
-		} else {
-			fmt.Println("Channel has been closed")
-			break
-		}
+	// for {
+	// 	if details, open := <-dispatchChannel; open {
+	// 		fmt.Println("Dispatch to", details.Customer, ":", details.Quantity, "x", details.Product.Name)
+	// 	} else {
+	// 		fmt.Println("Channel has been closed")
+	// 		break
+	// 	}
+	// }
+	// The for loop will continue to receive values until the channel is closed. (You can use a for...range loop on a channel that isn’t closed, in which case the loop will never exit.)
+	for details := range dispatchChannel {
+		fmt.Println("Dispatch to", details.Customer, ":", details.Quantity, "x", details.Product.Name)
 	}
+	fmt.Println("Channel has been closed")
 }
