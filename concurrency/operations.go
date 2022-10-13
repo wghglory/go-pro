@@ -18,6 +18,7 @@ func CalcStoreTotal(data ProductData) {
 		// receive a result using a channel
 		// Receiving from a channel is a blocking operation, meaning that execution will not continue until a value has been received, which means I no longer have to prevent the program from terminating
 		storeTotal += <-channel
+		fmt.Println("-- channel read complete")
 	}
 	fmt.Println("Total:", ToCurrency(storeTotal))
 }
@@ -25,11 +26,12 @@ func CalcStoreTotal(data ProductData) {
 func (group ProductGroup) SubTotalPrice(category string, resultChannel chan float64) {
 	var total float64
 	for _, p := range group {
-		fmt.Println(category, "product:", p.Name)
+		// fmt.Println(category, "product:", p.Name)
 		total += p.Price
 		// time.Sleep(time.Millisecond * 100)
 	}
-	fmt.Println(category, "Subtotal:", ToCurrency(total))
+	fmt.Println(category, "channel sending", ToCurrency(total))
 	// send value thru resultChannel
 	resultChannel <- total
+	fmt.Println(category, "channel send complete")
 }
