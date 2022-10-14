@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 	// "time"
 )
 
@@ -36,11 +37,13 @@ func main() {
 	result := <-resultChannel
 	fmt.Println("Result:", result)
 
-	// receive unknown number of channel messages, need check channel open/close
+	// ---------- receive unknown number of channel messages, need check channel open/close ---------
 	dispatchChannel := make(chan DispatchNotification, 100)
-	var sendOnlyChannel chan<- DispatchNotification = dispatchChannel
-	var receiveOnlyChannel <-chan DispatchNotification = dispatchChannel
-	go DispatchOrders(sendOnlyChannel) // explicit conversion: go DispatchOrders(chan<- DispatchNotification(dispatchChannel))
+	// var sendOnlyChannel chan<- DispatchNotification = dispatchChannel
+	// var receiveOnlyChannel <-chan DispatchNotification = dispatchChannel
+
+	// go DispatchOrders(sendOnlyChannel)
+	go DispatchOrders(chan<- DispatchNotification(dispatchChannel)) // explicit conversion
 	// for {
 	// 	if details, open := <-dispatchChannel; open {
 	// 		fmt.Println("Dispatch to", details.Customer, ":", details.Quantity, "x", details.Product.Name)
@@ -49,5 +52,24 @@ func main() {
 	// 		break
 	// 	}
 	// }
-	receiveDispatches(receiveOnlyChannel) // explicit conversion: receiveDispatches((<-chan DispatchNotification)(dispatchChannel))
+	// receiveDispatches(receiveOnlyChannel)
+	// receiveDispatches((<-chan DispatchNotification)(dispatchChannel)) // explicit conversion
+
+	for {
+		select {
+		case details, ok := <-dispatchChannel:
+			if ok {
+				fmt.Println("Dispatch to", details.Customer, ":", details.Quantity, "x", details.Product.Name)
+			} else {
+				fmt.Println("Channel has been closed")
+				goto alldone
+			}
+		default:
+			fmt.Println("-- No message ready to be received")
+			time.Sleep(time.Millisecond * 500)
+		}
+	}
+alldone:
+	fmt.Println("All values received")
+
 }
