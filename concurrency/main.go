@@ -6,6 +6,14 @@ import (
 	// "time"
 )
 
+func enumerateProducts(channel chan<- *Product) {
+	for _, p := range ProductList[:3] {
+		channel <- p
+		time.Sleep(time.Millisecond * 800)
+	}
+	close(channel)
+}
+
 // The for loop will continue to receive values until the channel is closed. (You can use a for...range loop on a channel that isn’t closed, in which case the loop will never exit.)
 func receiveDispatches(channel <-chan DispatchNotification) {
 	for details := range channel {
@@ -55,21 +63,38 @@ func main() {
 	// receiveDispatches(receiveOnlyChannel)
 	// receiveDispatches((<-chan DispatchNotification)(dispatchChannel)) // explicit conversion
 
+	productChannel := make(chan *Product)
+	go enumerateProducts(productChannel)
+
+	openChannels := 2
+
 	for {
 		select {
 		case details, ok := <-dispatchChannel:
 			if ok {
 				fmt.Println("Dispatch to", details.Customer, ":", details.Quantity, "x", details.Product.Name)
 			} else {
-				fmt.Println("Channel has been closed")
-				goto alldone
+				fmt.Println("Dispatch channel has been closed")
+				dispatchChannel = nil // A nil channel is never ready and will not be chosen, allowing the select statement to move onto other case statements, whose channels may still be open.
+				openChannels--
+			}
+		case product, ok := <-productChannel:
+			if ok {
+				fmt.Println("Product:", product.Name)
+			} else {
+				fmt.Println("Product channel has been closed")
+				productChannel = nil
+				openChannels--
 			}
 		default:
+			if openChannels == 0 {
+				goto alldone
+			}
 			fmt.Println("-- No message ready to be received")
 			time.Sleep(time.Millisecond * 500)
 		}
 	}
+
 alldone:
 	fmt.Println("All values received")
-
 }
